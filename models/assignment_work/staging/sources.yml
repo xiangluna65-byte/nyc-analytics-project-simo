@@ -89,7 +89,7 @@ sources:
             description: Nearby landmark or point of interest
 
 
-      - name: source_open_restaurant_apps
+      - name: source_nyc_open_restaurant_apps
         description: |
           NYC Open Restaurant Applications.
           Raw data loaded from Socrata.
