@@ -13,7 +13,7 @@ WITH all_locations AS (
    -- Get locations from restaurant applications
    SELECT DISTINCT 
           borough, 
-          incident_zip AS zip_code
+          zip_code
        -- TODO replace (HINT: look @ dimensional model & staging data!)
    FROM {{ ref('stg_nyc_open_restaurant_apps') }}
    WHERE borough IS NOT NULL
@@ -23,7 +23,7 @@ location_dimension AS (
    SELECT
        {{ dbt_utils.generate_surrogate_key(['borough', 'zip_code']) }} AS location_key,
        borough,
-       incident_zip
+       zip_code
    FROM all_locations
 )
 
