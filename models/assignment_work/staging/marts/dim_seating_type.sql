@@ -1,37 +1,117 @@
--- Seating type dimension for open restaurant seating applications
-WITH seating_types AS (
-   SELECT DISTINCT
-       seating_interest_sidewalk AS seating_interest,
+-- Clean and standardize open restaurant application data
+-- One row per restaurant application
 
---NOTE: The final result we want to select here is two boolean columns (TRUE or FALSE values in them), one column approved_for_sidewalk (TRUE or FALSE value), and one column approved_for_roadway 
+{{ config(materialized='table') }}
 
-       CASE 
-           WHEN LOWER(approved_for_sidewalk_seating) = 'yes' THEN TRUE
-           ELSE FALSE
-       END AS approved_for_sidewalk,
+WITH source AS (
 
-       CASE 
-           WHEN LOWER(approved_for_roadway_seating) = 'yes' THEN TRUE
-           ELSE FALSE
-       END AS approved_for_roadway
+   SELECT *
+   FROM {{ source('raw','source_nyc_open_restaurant_apps') }}
 
-   FROM {{ ref('stg_nyc_open_restaurant_apps') }}
-   WHERE seating_interest_sidewalk IS NOT NULL
 ),
 
-seating_dimension AS (
+cleaned AS (
+
    SELECT
-       {{ dbt_utils.generate_surrogate_key([
-           'seating_interest',
-           'approved_for_sidewalk',
-           'approved_for_roadway'
-       ]) }} AS seating_type_key,
 
-       seating_interest,
-       approved_for_sidewalk,
-       approved_for_roadway
+      -- =========================
+      -- Identifiers
+      -- =========================
+      CAST(objectid AS STRING) AS objectid,
+      globalid,
 
-   FROM seating_types
+      -- =========================
+      -- Business Info
+      -- =========================
+      restaurant_name,
+      legal_business_name,
+      doing_business_as_dba,
+
+      bulding_number AS building_number,
+      street,
+      borough,
+
+      CAST(zip AS STRING) AS zip_code,
+      business_address,
+      food_service_establishment,
+
+      -- =========================
+      -- ✅ Seating dimension raw values (KEEP THESE!)
+      -- These are required for dim_seating_type
+      -- =========================
+      seating_interest_sidewalk,
+
+      approved_for_sidewalk_seating,
+      approved_for_roadway_seating,
+
+      qualify_alcohol,
+
+      -- =========================
+      -- Boolean Normalization
+      -- (We convert them but also keep raw above)
+      -- =========================
+      CASE WHEN LOWER(approved_for_sidewalk_seating) = 'yes' THEN TRUE ELSE FALSE END 
+         AS approved_for_sidewalk,
+
+      CASE WHEN LOWER(approved_for_roadway_seating) = 'yes' THEN TRUE ELSE FALSE END 
+         AS approved_for_roadway,
+
+      CASE WHEN LOWER(qualify_alcohol) = 'yes' THEN TRUE ELSE FALSE END 
+         AS qualify_alcohol_flag,
+
+      -- =========================
+      -- Dimensions
+      -- =========================
+      SAFE_CAST(sidewalk_dimensions_length AS FLOAT64) AS sidewalk_dimensions_length,
+      SAFE_CAST(sidewalk_dimensions_width AS FLOAT64) AS sidewalk_dimensions_width,
+      SAFE_CAST(sidewalk_dimensions_area AS FLOAT64) AS sidewalk_dimensions_area,
+
+      SAFE_CAST(roadway_dimensions_length AS FLOAT64) AS roadway_dimensions_length,
+      SAFE_CAST(roadway_dimensions_width AS FLOAT64) AS roadway_dimensions_width,
+      SAFE_CAST(roadway_dimensions_area AS FLOAT64) AS roadway_dimensions_area,
+
+      -- =========================
+      -- Geo
+      -- =========================
+      SAFE_CAST(latitude AS FLOAT64) AS latitude,
+      SAFE_CAST(longitude AS FLOAT64) AS longitude,
+
+      -- =========================
+      -- Administrative
+      -- =========================
+      community_board,
+      council_district,
+      census_tract,
+      bin,
+      bbl,
+      nta,
+
+      sla_serial_number,
+      sla_license_type,
+      landmark_district_or_building,
+      landmarkdistrict_terms,
+      healthcompliance_terms,
+
+      -- =========================
+      -- Timestamp
+      -- =========================
+      SAFE.PARSE_TIMESTAMP(
+         '%m/%d/%Y %I:%M:%S %p',
+         time_of_submission
+      ) AS time_of_submission,
+
+      CURRENT_TIMESTAMP() AS _stg_loaded_at
+
+   FROM source
+
+   WHERE objectid IS NOT NULL
+
+   QUALIFY ROW_NUMBER() OVER (
+      PARTITION BY objectid
+      ORDER BY time_of_submission DESC
+   ) = 1
+
 )
 
-SELECT * FROM seating_dimension
+SELECT *
+FROM cleaned
