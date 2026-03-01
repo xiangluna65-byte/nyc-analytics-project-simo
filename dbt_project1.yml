@@ -18,11 +18,9 @@ target-path: target
 clean-targets:
   - target
   - dbt_packages
-
 models:
   nyc_analytics:
     +materialized: table
-
     assignment_work:
       staging:
         +materialized: table
@@ -35,19 +33,4 @@ models:
         open_restaurant_apps:
           +materialized: table
         dot_311:
-          +materialized: table
-
-
-    assignment_work2:
-      staging:
-        +materialized: table
-        +schema: dob_311_permit_staging
-      marts:
-        +materialized: table
-        +schema: dob_311_permit_marts
-        shared:
-          +materialized: table
-        311service_requests:
-          +materialized: table
-        permit_issuance:
           +materialized: table

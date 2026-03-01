@@ -1,0 +1,157 @@
+version: 2
+sources:
+  - name: raw
+    description: Raw data loaded from NYC Open Data
+    database: simoxiang-cis-4400-s26
+    schema: dob_311_permit
+
+    tables:
+    - name: dob_311service_requests
+      description: NYC 311 service requests related to Department of Buildings (DOB). One row represents one service request.
+      columns:
+        - name: unique_key
+          description: Unique ID for the service request
+          tests:
+            - unique
+            - not_null
+        - name: created_date
+          description: Timestamp when the request was created
+        - name: closed_date
+          description: Timestamp when the request was closed
+        - name: agency
+          description: Agency code responsible for the request
+        - name: agency_name
+          description: Full name of the responsible agency
+        - name: complaint_type
+          description: High-level category of the complaint
+        - name: descriptor
+          description: Detailed description of the complaint
+        - name: location_type
+          description: Location type where the incident occurred
+        - name: incident_zip
+          description: ZIP code of the incident location
+        - name: incident_address
+          description: Street address of the incident
+        - name: latitude
+          description: Latitude coordinate of incident location
+        - name: longitude
+          description: Longitude coordinate of incident location
+        - name: address_type
+          description: Type of address (ADDRESS, INTERSECTION, BLOCKFACE)
+        - name: bbl
+          description: Borough-Block-Lot identifier (NYC tax lot ID)
+        - name: borough
+          description: NYC borough where the incident occurred
+        - name: city
+          description: City name where incident occurred
+        - name: community_board
+          description: NYC Community Board district number
+        - name: council_district
+          description: NYC Council district number
+        - name: police_precinct
+          description: NYPD precinct number
+        - name: facility_type
+          description: Type of facility related to the incident
+        - name: open_data_channel_type
+          description: Method used to submit the request (ONLINE, PHONE, MOBILE, etc.)
+        - name: park_borough
+          description: Borough of park where incident occurred
+        - name: park_facility_name
+          description: Name of park facility where incident occurred
+        - name: resolution_action_updated_date
+          description: Date when resolution action was last updated
+        - name: resolution_description
+          description: Description of how the request was resolved
+        - name: status
+          description: Current status of request (Open, Closed, In Progress, etc.)
+        - name: street_name
+          description: Street name where incident occurred
+        - name: x_coordinate_state_plane
+          description: X coordinate in NY State Plane projection (NAD83)
+        - name: y_coordinate_state_plane
+          description: Y coordinate in NY State Plane projection (NAD83)
+        - name: cross_street_1
+          description: First cross street near incident location
+        - name: cross_street_2
+          description: Second cross street near incident location
+        - name: intersection_street_1
+          description: First street forming an intersection
+        - name: intersection_street_2
+          description: Second street forming an intersection
+        - name: landmark
+          description: Nearby landmark or point of interest
+        - name: descriptor_2
+          description: Additional detailed descriptor of the complaint
+
+    - name: dob_permit_issuance
+      description: |
+        NYC Department of Buildings (DOB) permit issuance records.
+        Each row represents one issued permit.
+      columns:
+        - name: permit_sequence__
+          description: Unique identifier for each permit issuance record
+          tests:
+            - unique
+            - not_null
+        - name: permit_type
+          description: Type of permit issued
+        - name: permit_status
+          description: Current status of the permit
+        - name: job_type
+          description: Type of job associated with the permit
+        - name: issuance_date
+          description: Timestamp when the permit was issued
+        - name: expiration_date
+          description: Timestamp when the permit expires
+        - name: borough
+          description: NYC borough where the permit was issued
+        - name: block
+          description: Tax block number of the property
+        - name: lot
+          description: Tax lot number of the property
+        - name: zip_code
+          description: ZIP code of the property
+        - name: work_type
+          description: Type of construction work being performed
+        - name: bldg_type
+          description: Building type classification
+        - name: residential
+          description: Indicates whether the property is residential
+        - name: gis_latitude
+          description: Latitude coordinate of the property location
+        - name: gis_longitude
+          description: Longitude coordinate of the property location
+        - name: community_board
+          description: NYC Community Board district number
+        - name: gis_council_district
+          description: NYC Council district number
+        - name: gis_census_tract
+          description: Census tract identifier
+        - name: gis_nta_name
+          description: Neighborhood Tabulation Area name
+        - name: filing_date
+          description: Date when the permit filing was submitted
+        - name: filing_status
+          description: Status of the permit filing
+        - name: job_start_date
+          description: Date when the job started
+        - name: permit_subtype
+          description: Subcategory of the permit type
+        - name: permit_si_no
+          description: Special inspection number associated with the permit
+        - name: self_cert
+          description: Indicates whether the permit was self-certified
+        - name: oil_gas
+          description: Indicates if the permit involves oil or gas work
+        - name: site_fill
+          description: Indicates whether site fill work is involved
+        - name: special_district_1
+          description: First special zoning district designation
+        - name: special_district_2
+          description: Second special zoning district designation
+        - name: street_name
+          description: Street name of the property
+        - name: city
+          description: City where the property is located
+        - name: state
+          description: State where the property is located
