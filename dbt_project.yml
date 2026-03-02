@@ -45,9 +45,3 @@ models:
       marts:
         +materialized: table
         +schema: dob_311_permit_marts
-        shared:
-          +materialized: table
-        311service_requests:
-          +materialized: table
-        permit_issuance:
-          +materialized: table
