@@ -6,9 +6,6 @@ WITH source AS (
 
 cleaned AS (
     SELECT
-        borough,
-        work_type,
-        permit_type,
 
         -- Create ID
         CAST(FARM_FINGERPRINT(CONCAT(
@@ -16,6 +13,10 @@ cleaned AS (
             COALESCE(zip_code, 'NA'), 
             COALESCE(permit_type, 'NA')
         )) AS STRING) AS permit_id,
+
+        work_type,
+        permit_type,
+        borough,
         
        -- Location - clean zip code
        CASE

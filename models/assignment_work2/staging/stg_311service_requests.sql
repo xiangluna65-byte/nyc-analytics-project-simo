@@ -9,8 +9,6 @@ cleaned AS (
         unique_key,
         complaint_type,
         borough,
-       
-        CAST(created_date AS TIMESTAMP) AS created_date,
 
         -- Location - clean zip code
        CASE
@@ -23,6 +21,8 @@ cleaned AS (
            THEN CAST(incident_zip AS STRING)
            ELSE NULL
        END AS zip_code,
+
+       CAST(created_date AS TIMESTAMP) AS created_date,
 
        -- Metadata
        CURRENT_TIMESTAMP() AS _stg_loaded_at
