@@ -28,7 +28,6 @@ final AS (
 
         -- Permit attributes
         p.work_type,
-        p.permit_type,
 
         -- Foreign keys
         d.date_key,

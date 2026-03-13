@@ -26,9 +26,6 @@ final AS (
         -- Natural key
         c.unique_key AS complaint_id,
 
-        -- Complaint attributes
-        c.complaint_type,
-
         -- Foreign keys
         d.date_key,
         l.location_key,
